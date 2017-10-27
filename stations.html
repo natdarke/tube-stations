@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8"> 
+        <script>
+        
+
+
+
+function stationsWithLetters(allStations, letters){
+    let stations = [];
+    let stationsByLetter = [];
+    allStations = allStations.map(function(name){
+        return name.toLowerCase();
+    });
+    for(let i = 0; i < letters.length; i++){
+        let tempStations = [];
+        for(let ii = 0; ii < allStations.length; ii++){
+            if(allStations[ii].indexOf(letters[i])!==-1){
+                tempStations = tempStations || [];
+                tempStations.push(allStations[ii]);
+            }
+        }
+        stationsByLetter.push(tempStations);
+    }
+    stationsByLetter.sort(function(a,b){
+        return a.length >= b.length;
+    });
+    for(let i = 0; i < stationsByLetter.length; i++){
+        if(letters.length > 0){
+            let station = wordWithMostDifferentLetters(stationsByLetter[i], letters);
+            stations.push(station.name);
+            letters = removeAfromB(station.matchedLetters, letters);
+        }
+    }
+    return stations;
+
+    
+    function removeAfromB(a, b){
+        // a: array of anything
+        // b: array of anything
+        // returns array b, minus any matches with a
+        // e.g. if 
+            // a = [2,1]
+            // b = [1,2,3]
+            // then returns [3] 
+        let shrunkArray = [];
+        b.forEach(
+            (bItem) => {
+                if(a.every(aItem => bItem !== aItem)){
+                    shrunkArray.push(bItem);
+                }
+            }
+        );
+        return shrunkArray;
+    } 
+    function wordWithMostDifferentLetters(words, letters){
+        // words : array of strings
+        // letters: array of strings
+        // e.g. if
+            // words = ['hello', 'world']
+            // letters = ['o','d','l','x']
+            // then returns {
+            //    name: 'world',
+            //    matchedLetters: ['o','d','l']
+            // }
+        let bestWord = {
+            name: '',
+            matchedLetters : []
+        };
+        for(let i = 0; i < words.length; i++){
+            let matchedLetters = overlapArrays(words[i].split(''), letters);
+            if(matchedLetters.length >= bestWord.matchedLetters.length){
+                bestWord = {
+                    name: words[i],
+                    matchedLetters: matchedLetters
+                }
+            }
+        }
+        return bestWord;
+    }
+    function overlapArrays(a, b){
+        // a : array of anything
+        // b: array of anything
+        // returns array of values common to both arrays
+        // e.g. if
+            // a = [1,2,3,4]
+            // b = [3,1,6,7]
+            // then returns [1,3]
+        let matched = [];
+        let bClone = Object.assign([], b); // de-reference otherwise splice (below) would affect b in calling function
+         for(let i = 0; i < a.length; i++){
+            for(let ii = 0; ii < bClone.length; ii++){
+                if(a[i]===bClone[ii]){
+                    matched.push(a[i]);
+                    bClone.splice(ii,1);
+                    break;
+                }
+            }
+        }
+        return matched;
+    }
+}
+
+
+function ready(f) {
+    if(
+        document.readyState === "interactive"
+        || document.readyState === "complete"
+    ){
+        f();
+    }
+    else {
+        document.addEventListener("DOMContentLoaded", f);
+    }
+};
+
+ready(()=>{
+
+    let allStations = ["Acton Town", "Aldgate", "Aldgate East", "All Saints", "Alperton", "Amersham", "Angel", "Archway", "Arnos Grove", "Arsenal", "Baker Street", "Balham", "Bank", "Barbican", "Barking", "Barkingside", "Barons Court", "Bayswater", "Beckton", "Beckton Park", "Becontree", "Belsize Park", "Bermondsey", "Bethnal Green", "Blackfriars", "Blackhorse Road", "Blackwall", "Bond Street", "Borough", "Boston Manor", "Bounds Green", "Bow Church", "Bow Road", "Brent Cross", "Brixton", "Bromley-by-Bow", "Brondesbury", "Brondesbury Park", "Buckhurst Hill", "Burnt Oak", "Caledonian Road", "Caledonian Road & Barnsbury", "Camden Road", "Camden Town", "Canada Water", "Canary Wharf", "Canning Town", "Cannon Street", "Canonbury", "Canons Park", "Chalfont & Latimer", "Chalk Farm", "Chancery Lane", "Charing Cross", "Chesham", "Chigwell", "Chiswick Park", "Chorleywood", "Clapham Common", "Clapham North", "Clapham South", "Cockfosters", "Colindale", "Colliers Wood", "Covent Garden", "Crossharbour And London Arena", "Croxley", "Custom House for ExCel", "Cutty Sark", "Cyprus", "Dagenham East", "Dagenham Heathway", "Dalston Kingsland", "Debden", "Debtford Bridge", "Devons Road", "Dollis Hill", "Ealing Broadway", "Ealing Common", "Earls Court", "East Acton", "East Finchley", "East Ham", "East India", "East Putney", "Eastcote", "Edgware", "Edgware Road", "Elephant And Castle", "Elm Park", "Elverson Road", "Embankment", "Epping", "Euston", "Euston Square", "Fairlop", "Farringdon", "Finchley", "Finchley Road", "Finchley Road And Frognal", "Finsbury Park", "Fulham Broadway", "Gallions Reach", "Gants Hill", "Gloucester Road", "Golders Green", "Goldhawk Road", "Goodge Street", "Gospel Oak", "Grange Hill", "Great Portland Street", "Green Park", "Greenford", "Greenwich", "Gunnersbury", "Hackney Central", "Hackney Wick", "Hainault", "Hammersmith", "Hampstead Heath", "Hampstead", "Hanger Lane", "Harlesden", "Harrow And Wealdstone", "Harrow on-the-Hill", "Hatton Cross", "Heathrow Terminal 4", "Heathrow Terminals 1,2,3", "Hendon Central", "Heron Quays", "High Barnet", "High Street Kensington", "Highbury & Islington", "Highgate", "Hillingdon", "Holborn", "Holland Park", "Holloway Road", "Homerton", "Hornchurch", "Hounslow Central", "Hounslow East", "Hounslow West", "Hyde Park Corner", "Ickenham", "Island Gardens", "Kennington", "Kensal Green", "Kensal Rise", "Kensington (Olympia)", "Kentish Town", "Kentish Town West", "Kenton", "Kew Gardens", "Kilburn", "Kilburn Park", "King\'s Cross St Pancras", "Kingsbury", "Knightsbridge", "Ladbroke Grove", "Lambeth North", "Lancaster Gate", "Latimer Road", "Leicester Square", "Lewisham", "Leyton", "Leytonstone", "Limehouse", "Liverpool Street", "London Bridge", "Loughton", "Manor House", "Mansion House", "Marble Arch", "Marylebone", "Maida Vale", "Mile End", "Mill Hill East", "Monument", "Moor Park", "Moorgate", "Morden", "Mornington Crescent", "Mudchute", "Neasden", "New Cross Gate", "New Cross", "Newbury Park", "North Acton", "North Ealing", "North Greenwich", "North Harrow", "North Wembley", "North Woolwich", "Northfields", "Northolt", "Northwick Park", "Northwood", "Northwood Hills", "Notting Hill Gate", "Oakwood", "Old Street", "Osterley", "Oval", "Oxford Circus", "Paddington", "Park Royal", "Parsons Green", "Perivale", "Picadilly Circus", "Pimlico", "Pinner", "Plaistow", "Poplar", "Preston Road", "Prince Regent", "Pudding Mill Lane", "Putney Bridge", "Queens Park", "Queensbury", "Queensway", "Ravenscourt Park", "Rayners Lane", "Redbridge", "Regent\'s Park", "Richmond", "Rickmansworth", "Roding Valley", "Rotherhithe", "Royal Albert", "Royal Oak", "Royal Victoria", "Ruislip", "Ruislip Gardens", "Ruislip Manor", "Russel Square", "Seven Sisters", "Shadwell", "Shepherd\'s Bush", "Shoreditch", "Silvertown", "Sloane Square", "Snaresbrook", "South Acton", "South Ealing", "South Harrow", "South Kensington", "South Kenton", "South Quay", "South Ruislip", "South Wimbledon", "South Woodford", "Southfields", "Southgate", "Southwark", "St. James\'s Park", "St John\'s Wood", "St Paul\'s", "Stamford Brook", "Stanmore", "Stepney Green", "Stockwell", "Stonebridge Park", "Stratford", "Sudbury Hill", "Sudbury Town", "Surrey Quays", "Swiss Cottage", "Temple", "Theydon Bois", "Tooting Bec", "Tooting Broadway", "Tottenham Court Road", "Tottenham Hale", "Totteridge And Whetstone", "Tower Gateway", "Tower Hill", "Tufnell Park", "Turnham Green", "Turnpike Lane", "Upminster", "Upminster Bridge", "Upney", "Upton Park", "Uxbridge", "Vauxhall", "Victoria", "Walthamstow Central", "Wanstead", "Wapping", "Warren Street", "Warwick Avenue", "Waterloo", "Watford", "Wembley Central", "Wembley Park", "West Acton", "West Brompton", "West Finchley", "West Ham", "West Hampstead", "West Harrow", "West India Quay", "West Kensington", "West Ruislip", "Westbourne Park", "Westferry", "Westminster", "White City", "Whitechapel", "Willesden Green", "Willesden Junction", "Wimbledon", "Wimbledon Park", "Wood Green", "Woodford", "Woodside Park"];
+    let letters = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"];
+    document.getElementsByTagName('body')[0].innerHTML = stationsWithLetters(allStations,letters).join(', ');
+});
+
+
+        </script>
+    </head>
+    <body></body>
+</html>
